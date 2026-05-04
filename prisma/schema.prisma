@@ -13,3 +13,23 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             Int            @id @default(autoincrement())
+  username       String         @unique
+  name           String?
+  email          String         @unique
+  // 建立关联：一个用户可以有多个可用时段
+  availabilities Availability[]
+}
+
+model Availability {
+  id        Int    @id @default(autoincrement())
+  dayOfWeek Int // 0 (周日) 到 6 (周六)
+  startTime String // 格式如 "09:00"
+  endTime   String // 格式如 "17:00"
+
+  // 外键关联到 User 表
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
